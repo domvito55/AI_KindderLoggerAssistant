@@ -1,14 +1,18 @@
+# Use the official Python image from the Docker Hub
 FROM python:3.11
 
+# Set the working directory in the container
 WORKDIR /usr/src/app
 
 # Copy the requirements file into the container
 COPY requirements.txt ./
 
-# Install dependencies with pip upgrade and retry logic
-RUN pip install --upgrade pip \
-  && pip install --no-cache-dir -r requirements.txt || \
-  (sleep 5 && pip install --no-cache-dir -r requirements.txt)
+# Upgrade pip separately
+RUN pip install --upgrade pip
+
+# Install dependencies with retry logic and no PEP 517 usage
+RUN pip install --no-cache-dir --no-use-pep517 -r requirements.txt || \
+  (sleep 5 && pip install --no-cache-dir --no-use-pep517 -r requirements.txt)
 
 # Copy the application code into the container
 COPY service.py ./
