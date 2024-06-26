@@ -21,6 +21,12 @@ jobs:
             unzip awscliv2.zip
             sudo ./aws/install
       - run:
+          name: Configure AWS CLI
+          command: |
+            aws configure set aws_access_key_id $AWS_ACCESS_KEY_ID
+            aws configure set aws_secret_access_key $AWS_SECRET_ACCESS_KEY
+            aws configure set default.region $AWS_DEFAULT_REGION
+      - run:
           name: Build Docker image
           command: docker build -t domvito55/kindderlogger:v1 .
       - run:
