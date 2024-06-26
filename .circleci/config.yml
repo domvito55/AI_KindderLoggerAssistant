@@ -19,8 +19,7 @@ workflows:
     jobs:
       - print-directory
       - docker/publish:
-          image: domvito55/kindderlogger
-          tag: v1
+          image: domvito55/kindderlogger:v1
           docker-username: DOCKER_USERNAME
           docker-password: DOCKER_PASSWORD
           context: /home/circleci/project
