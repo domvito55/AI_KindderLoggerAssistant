@@ -10,8 +10,8 @@ workflows:
       - docker/publish:
           image: domvito55/kindderlogger
           tag: v1
-          docker-username: DOCKER_USERNAME
-          docker-password: DOCKER_PASSWORD
+          docker-username: ${DOCKER_USERNAME}
+          docker-password: ${DOCKER_PASSWORD}
       - aws-ecs/deploy-service-update:
           requires:
             - docker/publish
