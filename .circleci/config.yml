@@ -1,27 +1,36 @@
 version: 2.1
 
 orbs:
-  aws-ecs: circleci/aws-ecs@2.1.0
-  docker: circleci/docker@2.1.1
+  aws-ecs: circleci/aws-ecs@4.0.0
+  docker: circleci/docker@2.6.0
+
+jobs:
+  print-directory:
+    docker:
+      - image: cimg/python:3.11
+    steps:
+      - checkout
+      - run:
+          name: List Directory Contents
+          command: ls -la /home/circleci/project
 
 workflows:
   build-and-deploy:
     jobs:
+      - print-directory
       - docker/publish:
           image: domvito55/kindderlogger
           tag: v1
-          docker-username: ${DOCKER_USERNAME}
-          docker-password: ${DOCKER_PASSWORD}
-          setup: true
+          docker-username: DOCKER_USERNAME
+          docker-password: DOCKER_PASSWORD
           registry: "https://index.docker.io/v1/"
-          context: .
-          dockerfile: Dockerfile
-          extra-build-args: ""
+          context: /home/circleci/project
+          dockerfile: /home/circleci/project/Dockerfile
 
       - aws-ecs/deploy-service-update:
           requires:
             - docker/publish
           family: "skillsTaskDefinitionBridge"
-          cluster-name: "skillsCluster"
+          cluster: "skillsCluster"
           service-name: "skillsService"
-          container-image-name-updates: "skillsContainer=domvito55/kindderlogger:v1"
+          container-image-updates: "skillsContainer=domvito55/kindderlogger:v1"
