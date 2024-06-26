@@ -14,16 +14,6 @@ jobs:
           name: List Directory Contents
           command: ls -la /home/circleci/project
 
-jobs:
-  print-directory:
-    docker:
-      - image: circleci/python:3.11
-    steps:
-      - checkout
-      - run:
-          name: List Directory Contents
-          command: ls -la /home/circleci/project
-
 workflows:
   build-and-deploy:
     jobs:
@@ -33,7 +23,6 @@ workflows:
           tag: v1
           docker-username: DOCKER_USERNAME
           docker-password: DOCKER_PASSWORD
-          registry: "https://index.docker.io/v1/"
           context: /home/circleci/project
           dockerfile: /home/circleci/project/Dockerfile
 
