@@ -7,9 +7,8 @@ WORKDIR /usr/src/app
 # Copy the requirements file into the container
 COPY requirements.txt ./
 
-# Install dependencies with retry logic and no PEP 517 usage
-RUN pip install --no-cache-dir --no-use-pep517 -r requirements.txt || \
-  (sleep 5 && pip install --no-cache-dir --no-use-pep517 -r requirements.txt)
+# Install dependencies
+RUN pip install --no-cache-dir -r requirements.txt
 
 # Copy the application code into the container
 COPY service.py ./
