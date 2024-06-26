@@ -1,34 +1,32 @@
 version: 2.1
 
-orbs:
-  aws-ecs: circleci/aws-ecs@4.0.0
-  docker: circleci/docker@2.6.0
-
 jobs:
-  print-directory:
+  build:
     docker:
-      - image: cimg/python:3.11
+      - image: cimg/python:3.9
     steps:
       - checkout
+      - setup_remote_docker:
+          version: 20.10.7
       - run:
-          name: List Directory Contents
-          command: ls -la /home/circleci/project
-
+          name: Install Docker client
+          command: |
+            sudo apt-get update
+            sudo apt-get install -y docker-ce
+      - run:
+          name: Build Docker image
+          command: docker build -t domvito55/kindderlogger:v1 .
+      - run:
+          name: Push Docker image
+          command: |
+            echo $DOCKERHUB_PASS | docker login -u $DOCKERHUB_USER --password-stdin
+            docker push domvito55/kindderlogger:v1
+      - run:
+          name: Update ECS service
+          command: |
+            aws ecs update-service --cluster skillsCluster --service skillsService --force-new-deployment
 workflows:
-  build-and-deploy:
+  version: 2
+  build_and_deploy:
     jobs:
-      - print-directory
-      - docker/publish:
-          image: domvito55/kindderlogger:v1
-          docker-username: DOCKER_USERNAME
-          docker-password: DOCKER_PASSWORD
-          context: /home/circleci/project
-          dockerfile: /home/circleci/project/Dockerfile
-
-      - aws-ecs/deploy-service-update:
-          requires:
-            - docker/publish
-          family: "skillsTaskDefinitionBridge"
-          cluster: "skillsCluster"
-          service-name: "skillsService"
-          container-image-updates: "skillsContainer=domvito55/kindderlogger:v1"
+      - build
