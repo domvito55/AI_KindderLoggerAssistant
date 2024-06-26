@@ -4,19 +4,28 @@ orbs:
   aws-ecs: circleci/aws-ecs@2.1.0
   docker: circleci/docker@2.1.1
 
+jobs:
+  print-directory:
+    docker:
+      - image: circleci/python:3.11
+    steps:
+      - checkout
+      - run:
+          name: List Directory Contents
+          command: ls -la
+
 workflows:
   build-and-deploy:
     jobs:
+      - print-directory
       - docker/publish:
           image: domvito55/kindderlogger
           tag: v1
-          docker-username: ${DOCKER_USERNAME}
-          docker-password: ${DOCKER_PASSWORD}
-          setup: true
+          docker-username: DOCKER_USERNAME
+          docker-password: DOCKER_PASSWORD
           registry: "https://index.docker.io/v1/"
           context: .
           dockerfile: Dockerfile
-          extra-build-args: ""
 
       - aws-ecs/deploy-service-update:
           requires:
