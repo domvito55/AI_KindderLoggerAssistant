@@ -12,7 +12,7 @@ jobs:
       - checkout
       - run:
           name: List Directory Contents
-          command: ls -la
+          command: ls -la /home/circleci/project
 
 workflows:
   build-and-deploy:
@@ -24,8 +24,8 @@ workflows:
           docker-username: DOCKER_USERNAME
           docker-password: DOCKER_PASSWORD
           registry: "https://index.docker.io/v1/"
-          context: .
-          dockerfile: Dockerfile
+          context: /home/circleci/project
+          dockerfile: /home/circleci/project/Dockerfile
 
       - aws-ecs/deploy-service-update:
           requires:
