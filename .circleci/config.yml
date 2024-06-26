@@ -19,7 +19,7 @@ jobs:
       - run:
           name: Push Docker image
           command: |
-            echo $DOCKERHUB_PASS | docker login -u $DOCKERHUB_USER --password-stdin
+            echo "$DOCKERHUB_PASS" | docker login -u "$DOCKERHUB_USER" --password-stdin
             docker push domvito55/kindderlogger:v1
       - run:
           name: Update ECS service
