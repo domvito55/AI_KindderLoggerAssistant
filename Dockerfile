@@ -7,8 +7,8 @@ WORKDIR /usr/src/app
 # Copy the requirements file into the container
 COPY requirements.txt ./
 
-# Install dependencies
-RUN pip install --no-cache-dir -r requirements.txt
+# Install dependencies with limited concurrency and disabled progress bar
+RUN pip install --no-cache-dir --no-compile --disable-pip-version-check --progress-bar off -r requirements.txt
 
 # Copy the application code into the container
 COPY service.py ./
