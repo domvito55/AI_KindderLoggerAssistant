@@ -14,6 +14,13 @@ jobs:
             sudo apt-get update
             sudo apt-get install -y docker-ce
       - run:
+          name: Install AWS CLI
+          command: |
+            sudo apt-get install -y unzip
+            curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
+            unzip awscliv2.zip
+            sudo ./aws/install
+      - run:
           name: Build Docker image
           command: docker build -t domvito55/kindderlogger:v1 .
       - run:
