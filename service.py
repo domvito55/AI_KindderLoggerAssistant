@@ -32,15 +32,19 @@ app = FastAPI()
 # Configure logging
 logging.basicConfig(level=logging.INFO)
 
+
 # ### Data Models ###
 class MessageRequest(BaseModel):
     """Data model for the incoming message request."""
     message: str
 
+
 # ### API Endpoints ###
 
+
 @app.post("/message")
-async def read_message(request: Request, message_request: MessageRequest = Body(...)):
+async def read_message(request: Request,
+                       message_request: MessageRequest = Body(...)):
     """
     Endpoint to handle incoming messages and get a response from the OpenAI assistant.
 
@@ -70,25 +74,19 @@ async def read_message(request: Request, message_request: MessageRequest = Body(
     assistant = client.beta.assistants.retrieve(assistant_id)
 
     # Add the user message to the thread
-    client.beta.threads.messages.create(
-        thread.id,
-        role="user",
-        content=message
-    )
+    client.beta.threads.messages.create(thread.id,
+                                        role="user",
+                                        content=message)
 
     # Start a new run with the assistant
-    run = client.beta.threads.runs.create(
-        thread_id=thread.id,
-        assistant_id=assistant.id
-    )
+    run = client.beta.threads.runs.create(thread_id=thread.id,
+                                          assistant_id=assistant.id)
 
     # Poll for the completion of the run
     still_running = True
     while still_running:
-        latest_run = client.beta.threads.runs.retrieve(
-            thread_id=thread.id,
-            run_id=run.id
-        )
+        latest_run = client.beta.threads.runs.retrieve(thread_id=thread.id,
+                                                       run_id=run.id)
         still_running = latest_run.status != "completed"
         if still_running:
             time.sleep(2)
@@ -98,3 +96,8 @@ async def read_message(request: Request, message_request: MessageRequest = Body(
     result = messages.data[0].content
 
     return {"message": result}
+
+
+if __name__ == "__main__":
+    import uvicorn
+    uvicorn.run(app, reload=True)
