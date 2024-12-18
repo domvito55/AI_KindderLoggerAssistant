@@ -13,3 +13,5 @@ To use this code you will need:
 - Step 6: run the assistants.py script to test the assistant locally
 - Step 7: Once the files, vectors, and assistant is created, you can expose it using uvicorn and the service.py script
 
+It was also provided a dockerfile and a .circleci config to create a container and automatically deploy it using AWS ECS, but I am currently not watching this repo to save costs, this is a demo only.
+
